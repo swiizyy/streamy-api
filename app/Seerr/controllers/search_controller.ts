@@ -82,13 +82,14 @@ export default class SeerrSearchController {
 
   async search({ request, response }: HttpContext) {
     const { query, page = 1, language } = await request.validateUsing(searchValidator)
+    const effectiveLanguage = language ?? 'fr-FR'
 
-    const cacheKey = `seerr:search:${query}:${page}:${language ?? ''}`
+    const cacheKey = `seerr:search:${query}:${page}:${effectiveLanguage}`
     let result = cacheService.get<TmdbSearchResult>(cacheKey)
 
     if (!result) {
       try {
-        result = await this.tmdb.searchMulti(query, page, language ?? 'fr-FR')
+        result = await this.tmdb.searchMulti(query, page, effectiveLanguage)
         cacheService.set(cacheKey, result, 300)
       } catch (error) {
         return response.status(502).json({
