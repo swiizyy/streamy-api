@@ -17,6 +17,23 @@ export default defineConfig({
 
   /*
   |--------------------------------------------------------------------------
+  | Directories
+  |--------------------------------------------------------------------------
+  |
+  | Configure the default scaffolding directories used by `node ace make:*`
+  | commands.  Feature-domain files (e.g. app/Seerr/controllers/) are created
+  | manually or by passing an explicit output path to the make command;
+  | these defaults are used as the fallback for top-level MVC artefacts.
+  |
+  */
+  directories: {
+    controllers: 'app/controllers',
+    middleware: 'app/middleware',
+    transformers: 'app/transformers',
+  },
+
+  /*
+  |--------------------------------------------------------------------------
   | Commands
   |--------------------------------------------------------------------------
   |

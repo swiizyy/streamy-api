@@ -17,6 +17,17 @@ const StatsController = () => import('#controllers/stats_controller')
 const InvitesController = () => import('#controllers/invites_controller')
 const ReferralsController = () => import('#controllers/referrals_controller')
 
+// ── Feature-based domain controllers ─────────────────────────────────────────
+const SeerrAuthController = () => import('#seerr/controllers/auth_controller')
+const SeerrSearchController = () => import('#seerr/controllers/search_controller')
+const SeerrRequestsController = () => import('#seerr/controllers/requests_controller')
+const SeerrMovieController = () => import('#seerr/controllers/movie_controller')
+const SeerrTvController = () => import('#seerr/controllers/tv_controller')
+const SeerrUserController = () => import('#seerr/controllers/user_controller')
+const StreamyStatsSearchController = () => import('#streamystats/controllers/search_controller')
+const StreamyStatsRecommendationsController = () =>
+  import('#streamystats/controllers/recommendations_controller')
+
 router.get('/', () => ({ hello: 'StreamyAPI' }))
 
 router.post('/auth/login', [AuthController, 'login'])
@@ -75,4 +86,45 @@ router
   })
   .use(middleware.auth())
   .use(middleware.role({ roles: ['admin'] }))
+
+// ── Seerr-compatible API (/api/v1) ────────────────────────────────────────────
+// Public endpoint — authentication is handled inside the controller.
+router.post('/api/v1/auth/local', [SeerrAuthController, 'login'])
+
+// Protected Seerr endpoints — use multiAuth to accept OAT or MediaBrowser tokens.
+router
+  .group(() => {
+    router.get('/api/v1/auth/me', [SeerrAuthController, 'me'])
+
+    // Search
+    router.get('/api/v1/search', [SeerrSearchController, 'search'])
+
+    // Requests — count must be registered before :requestId to avoid collision
+    router.get('/api/v1/request/count', [SeerrRequestsController, 'count'])
+    router.get('/api/v1/request', [SeerrRequestsController, 'index'])
+    router.post('/api/v1/request', [SeerrRequestsController, 'store'])
+    router.get('/api/v1/request/:requestId', [SeerrRequestsController, 'show'])
+    router.post('/api/v1/request/:requestId/:status', [SeerrRequestsController, 'updateStatus'])
+    router.delete('/api/v1/request/:requestId', [SeerrRequestsController, 'destroy'])
+
+    // Movie & TV details
+    router.get('/api/v1/movie/:movieId', [SeerrMovieController, 'show'])
+    router.get('/api/v1/tv/:tvId', [SeerrTvController, 'show'])
+
+    // Users
+    router.get('/api/v1/user', [SeerrUserController, 'index'])
+    router.get('/api/v1/user/:userId', [SeerrUserController, 'show'])
+  })
+  .use(middleware.multiAuth())
+
+// ── StreamyStats-compatible API (/api) ────────────────────────────────────────
+router
+  .group(() => {
+    router.get('/api/streamystats/search', [StreamyStatsSearchController, 'search']).as('streamystats.search')
+    router.get('/api/streamystats/search/top', [StreamyStatsSearchController, 'top']).as('streamystats.search.top')
+    // Canonical StreamyStats paths (aliased to avoid route-name collision)
+    router.get('/api/search', [StreamyStatsSearchController, 'search']).as('api.search')
+    router.get('/api/recommendations', [StreamyStatsRecommendationsController, 'index']).as('api.recommendations')
+  })
+  .use(middleware.multiAuth())
 
