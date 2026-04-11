@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invitation Streamy</title>
+    <style>
+      :root {
+        --bg-a: #0c1425;
+        --bg-b: #112d3f;
+        --card: rgba(255, 255, 255, 0.08);
+        --line: rgba(255, 255, 255, 0.18);
+        --text: #f7f9fc;
+        --muted: #b6c3d3;
+        --accent: #35c7a6;
+        --danger: #ff6e6e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+        color: var(--text);
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 15% 20%, rgba(53, 199, 166, 0.24), transparent 35%),
+          radial-gradient(circle at 85% 70%, rgba(62, 138, 255, 0.2), transparent 40%),
+          linear-gradient(135deg, var(--bg-a), var(--bg-b));
+        display: grid;
+        place-items: center;
+        padding: 18px;
+      }
+
+      .card {
+        width: min(680px, 100%);
+        border: 1px solid var(--line);
+        background: var(--card);
+        border-radius: 16px;
+        padding: 24px;
+        backdrop-filter: blur(10px);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(1.4rem, 4vw, 2rem);
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .restrictions {
+        margin-top: 18px;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      .grid {
+        margin-top: 14px;
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+
+      input {
+        margin-top: 6px;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--line);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+
+      button {
+        margin-top: 8px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #062c23;
+        font-weight: 700;
+        padding: 12px;
+        cursor: pointer;
+      }
+
+      .error {
+        margin-top: 10px;
+        color: var(--danger);
+      }
+
+      .ok {
+        margin-top: 10px;
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <section class="card">
+      @if(!valid)
+        <h1>Invitation invalide</h1>
+        <p>{{ reason }}</p>
+      @else
+        <h1>Rejoindre Streamy</h1>
+        <p>{{ label || 'Invitation standard' }}</p>
+
+        <div class="restrictions">
+          <strong>Restrictions</strong>
+          <p>Utilisations restantes: {{ restrictions?.remainingUses ?? 'illimite' }}</p>
+          <p>Expiration du compte: {{ restrictions?.accountExpiryDays ? restrictions.accountExpiryDays + ' jours' : 'Aucune' }}</p>
+          <p>Max streams: {{ restrictions?.maxStreams ?? 'Par defaut' }}</p>
+          <p>Expiration du lien: {{ restrictions?.expiresAt || 'Aucune' }}</p>
+        </div>
+
+        <form id="joinForm" class="grid">
+          <label>
+            Username
+            <input name="username" required minlength="1" />
+          </label>
+          <label>
+            Password
+            <input name="password" type="password" required minlength="8" />
+          </label>
+          <label>
+            Confirmation password
+            <input name="confirm" type="password" required minlength="8" />
+          </label>
+          <button type="submit">Creer mon compte</button>
+          <p id="message"></p>
+        </form>
+
+        <script>
+          const form = document.getElementById('joinForm')
+          const message = document.getElementById('message')
+
+          form.addEventListener('submit', async (event) => {
+            event.preventDefault()
+            message.className = ''
+            message.textContent = ''
+
+            const formData = new FormData(form)
+            const username = String(formData.get('username') || '')
+            const password = String(formData.get('password') || '')
+            const confirm = String(formData.get('confirm') || '')
+
+            if (password !== confirm) {
+              message.className = 'error'
+              message.textContent = 'Les mots de passe ne correspondent pas.'
+              return
+            }
+
+            const response = await fetch('/invites/{{ code }}/redeem', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password }),
+            })
+
+            const body = await response.json()
+
+            if (!response.ok) {
+              message.className = 'error'
+              message.textContent = body.message || body.reason || 'Erreur lors de la creation du compte.'
+              return
+            }
+
+            message.className = 'ok'
+            message.textContent = 'Compte cree. Token: ' + body.token.value
+          })
+        </script>
+      @endif
+    </section>
+  </body>
+</html>

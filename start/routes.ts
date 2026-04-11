@@ -14,11 +14,16 @@ const DownloadsController = () => import('#controllers/downloads_controller')
 const ServicesController = () => import('#controllers/services_controller')
 const WebhooksController = () => import('#controllers/webhooks_controller')
 const StatsController = () => import('#controllers/stats_controller')
+const InvitesController = () => import('#controllers/invites_controller')
+const ReferralsController = () => import('#controllers/referrals_controller')
 
 router.get('/', () => ({ hello: 'StreamyAPI' }))
 
 router.post('/auth/login', [AuthController, 'login'])
 router.post('/webhooks/jellyfin', [WebhooksController, 'jellyfin'])
+router.get('/join/:code', [InvitesController, 'joinPage'])
+router.get('/invites/:code/validate', [InvitesController, 'validate'])
+router.post('/invites/:code/redeem', [InvitesController, 'redeem'])
 
 router
   .group(() => {
@@ -43,6 +48,11 @@ router
     router.get('/stats/history', [StatsController, 'history'])
     router.get('/stats/activity', [StatsController, 'activity'])
     router.get('/stats/user/:id', [StatsController, 'user'])
+
+    router.post('/invites', [InvitesController, 'store']).use(middleware.inviteQuota())
+    router.get('/invites', [InvitesController, 'index'])
+    router.delete('/invites/:id', [InvitesController, 'destroy'])
+    router.get('/referrals', [ReferralsController, 'index'])
   })
   .use(middleware.auth())
 
@@ -57,6 +67,11 @@ router
     router.get('/admin/services/:id/profiles', [ServicesController, 'profiles'])
     router.get('/admin/services/:id/root-folders', [ServicesController, 'rootFolders'])
     router.get('/stats/global', [StatsController, 'global'])
+    router.get('/referrals/tree', [ReferralsController, 'tree'])
+    router.put('/admin/referrals/:id/revoke', [ReferralsController, 'revoke'])
+    router.put('/admin/referrals/:id/extend', [ReferralsController, 'extend'])
+    router.put('/admin/users/:id/quota', [ReferralsController, 'updateQuota'])
+    router.get('/admin/libraries', [InvitesController, 'libraries'])
   })
   .use(middleware.auth())
   .use(middleware.role({ roles: ['admin'] }))

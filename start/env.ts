@@ -37,6 +37,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   // Download sync
   DOWNLOAD_SYNC_INTERVAL_SECONDS: Env.schema.number.optional(),
 
+  // Invites & referrals
+  DEFAULT_INVITE_QUOTA: Env.schema.number.optional(),
+  ACCOUNT_EXPIRY_NOTIFICATION_DAYS: Env.schema.number.optional(),
+  CACHE_VIEWS: Env.schema.boolean.optional(),
+
   // Notifications
   DISCORD_WEBHOOK_URL: Env.schema.string.optional({ format: 'url', tld: false }),
 })

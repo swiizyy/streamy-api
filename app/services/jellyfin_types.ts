@@ -2,6 +2,13 @@ export interface JellyfinUserPolicy {
   IsAdministrator: boolean
   IsDisabled: boolean
   EnableAllFolders: boolean
+  EnabledFolders?: string[]
+  MaxActiveSessions?: number
+}
+
+export interface JellyfinLibrary {
+  id: string
+  name: string
 }
 
 export interface JellyfinUser {

@@ -68,6 +68,7 @@ export default defineConfig({
     () => import('#start/kernel'),
     () => import('#start/validator'),
     () => import('#start/download_sync'),
+    () => import('#start/expired_accounts'),
   ],
 
   /*
@@ -104,7 +105,7 @@ export default defineConfig({
   | the production build.
   |
   */
-  metaFiles: [],
+  metaFiles: ['resources/views/**/*.edge'],
 
   hooks: {
     init: [

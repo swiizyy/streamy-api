@@ -32,6 +32,56 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class InviteQuotaSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'maxInvites', 'resetAt', 'updatedAt', 'usedInvites', 'userId'] as const
+  $columns = InviteQuotaSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare maxInvites: number
+  @column.dateTime()
+  declare resetAt: DateTime | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare usedInvites: number
+  @column()
+  declare userId: bigint | number
+}
+
+export class InviteSchema extends BaseModel {
+  static $columns = ['accountExpiryDays', 'allowedLibraries', 'code', 'createdAt', 'createdBy', 'expiresAt', 'id', 'isActive', 'label', 'maxStreams', 'maxUses', 'remainingUses', 'updatedAt'] as const
+  $columns = InviteSchema.$columns
+  @column()
+  declare accountExpiryDays: number | null
+  @column()
+  declare allowedLibraries: any | null
+  @column()
+  declare code: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare createdBy: bigint | number
+  @column.dateTime()
+  declare expiresAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isActive: boolean
+  @column()
+  declare label: string | null
+  @column()
+  declare maxStreams: number | null
+  @column()
+  declare maxUses: number | null
+  @column()
+  declare remainingUses: number | null
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+}
+
 export class MediaRequestSchema extends BaseModel {
   static $columns = ['createdAt', 'externalId', 'id', 'mediaType', 'notes', 'requestedAt', 'respondedAt', 'respondedBy', 'seasons', 'serviceInstanceId', 'status', 'title', 'tmdbId', 'updatedAt', 'userId'] as const
   $columns = MediaRequestSchema.$columns
@@ -84,6 +134,29 @@ export class NotificationSchema extends BaseModel {
   declare type: string
   @column()
   declare userId: bigint | number
+}
+
+export class ReferralSchema extends BaseModel {
+  static $columns = ['accountExpiresAt', 'createdAt', 'id', 'inviteId', 'jellyfinUserId', 'notifiedExpiry', 'referredUserId', 'sponsorId', 'status'] as const
+  $columns = ReferralSchema.$columns
+  @column.dateTime()
+  declare accountExpiresAt: DateTime | null
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare inviteId: bigint | number
+  @column()
+  declare jellyfinUserId: string
+  @column()
+  declare notifiedExpiry: boolean
+  @column()
+  declare referredUserId: bigint | number
+  @column()
+  declare sponsorId: bigint | number
+  @column()
+  declare status: string
 }
 
 export class ServiceInstanceSchema extends BaseModel {

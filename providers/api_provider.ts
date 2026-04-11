@@ -1,6 +1,7 @@
 import { HttpContext } from '@adonisjs/core/http'
 import { BaseSerializer } from '@adonisjs/core/transformers'
 import { type SimplePaginatorMetaKeys } from '@adonisjs/lucid/types/querybuilder'
+import type InviteQuota from '#models/invite_quota'
 
 /**
  * Custom serializer for API responses that ensures consistent JSON structure
@@ -65,5 +66,6 @@ HttpContext.instanceProperty('serialize', serialize)
 declare module '@adonisjs/core/http' {
   export interface HttpContext {
     serialize: typeof serialize
+    inviteQuota?: InviteQuota
   }
 }
