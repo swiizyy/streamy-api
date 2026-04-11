@@ -15,7 +15,7 @@ services:
       - LOG_LEVEL=info
       - SESSION_DRIVER=cookie
       - APP_KEY=${APP_KEY}
-      - APP_URL=http://0.0.0.0:3333
+      - APP_URL=${APP_URL:-http://localhost:3333}
       - DB_CONNECTION=${DB_CONNECTION:-sqlite}
       # SQLite (par défaut)
       - SQLITE_FILENAME=/app/data/streamy.db
