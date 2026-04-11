@@ -17,6 +17,10 @@ const StatsController = () => import('#controllers/stats_controller')
 const InvitesController = () => import('#controllers/invites_controller')
 const ReferralsController = () => import('#controllers/referrals_controller')
 
+// ── Feature-based domain controllers ─────────────────────────────────────────
+const SeerrAuthController = () => import('#seerr/controllers/auth_controller')
+const StreamyStatsSearchController = () => import('#streamystats/controllers/search_controller')
+
 router.get('/', () => ({ hello: 'StreamyAPI' }))
 
 router.post('/auth/login', [AuthController, 'login'])
@@ -75,4 +79,23 @@ router
   })
   .use(middleware.auth())
   .use(middleware.role({ roles: ['admin'] }))
+
+// ── Seerr-compatible API (/api/v1) ────────────────────────────────────────────
+// Public endpoint — authentication is handled inside the controller.
+router.post('/api/v1/auth/local', [SeerrAuthController, 'login'])
+
+// Protected Seerr endpoints — use multiAuth to accept OAT or MediaBrowser tokens.
+router
+  .group(() => {
+    router.get('/api/v1/auth/me', [SeerrAuthController, 'me'])
+  })
+  .use(middleware.multiAuth())
+
+// ── StreamyStats-compatible API (/api/streamystats) ───────────────────────────
+router
+  .group(() => {
+    router.get('/api/streamystats/search', [StreamyStatsSearchController, 'search'])
+    router.get('/api/streamystats/search/top', [StreamyStatsSearchController, 'top'])
+  })
+  .use(middleware.multiAuth())
 
