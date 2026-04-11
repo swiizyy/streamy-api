@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  streamy-api:
+    build: .
+    container_name: streamy-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3333}:3333"
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - DB_CONNECTION=sqlite
+      - SQLITE_FILENAME=/app/data/streamy.db
+    volumes:
+      - streamy-data:/app/data
+
+volumes:
+  streamy-data:

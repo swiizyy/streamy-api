@@ -34,6 +34,9 @@ export default await Env.create(new URL('../', import.meta.url), {
   TMDB_API_KEY: Env.schema.string(),
   TMDB_BASE_URL: Env.schema.string.optional({ format: 'url', tld: false }),
 
+  // Database
+  SQLITE_FILENAME: Env.schema.string.optional(),
+
   // Download sync
   DOWNLOAD_SYNC_INTERVAL_SECONDS: Env.schema.number.optional(),
 

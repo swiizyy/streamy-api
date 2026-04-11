@@ -1,0 +1,10 @@
+node_modules
+build
+tmp
+.git
+.env
+.env.local
+*.md
+tests
+coverage
+.github

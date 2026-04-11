@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  streamy-api:
+    build: .
+    # image: ghcr.io/swiizyy/streamy-api:latest  # pour utiliser l'image pré-built
+    container_name: streamy-api
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3333}:3333"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3333
+      - LOG_LEVEL=info
+      - SESSION_DRIVER=cookie
+      - APP_KEY=${APP_KEY}
+      - APP_URL=http://0.0.0.0:3333
+      - DB_CONNECTION=${DB_CONNECTION:-sqlite}
+      # SQLite (par défaut)
+      - SQLITE_FILENAME=/app/data/streamy.db
+      # PostgreSQL (si DB_CONNECTION=pg)
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=${PG_USER:-streamy}
+      - PG_PASSWORD=${PG_PASSWORD:-streamy}
+      - PG_DB_NAME=${PG_DB_NAME:-streamy_api}
+      # Jellyfin
+      - JELLYFIN_URL=${JELLYFIN_URL}
+      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY}
+      - JELLYFIN_WEBHOOK_SECRET=${JELLYFIN_WEBHOOK_SECRET:-}
+      # TMDB
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      # Invitations
+      - DEFAULT_INVITE_QUOTA=${DEFAULT_INVITE_QUOTA:-5}
+      - ACCOUNT_EXPIRY_NOTIFICATION_DAYS=${ACCOUNT_EXPIRY_NOTIFICATION_DAYS:-3}
+      # Downloads
+      - DOWNLOAD_SYNC_INTERVAL_SECONDS=${DOWNLOAD_SYNC_INTERVAL_SECONDS:-60}
+      # Optionnel
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+    volumes:
+      - streamy-data:/app/data  # SQLite DB + éventuels fichiers
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - streamy-net
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: streamy-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${PG_USER:-streamy}
+      - POSTGRES_PASSWORD=${PG_PASSWORD:-streamy}
+      - POSTGRES_DB=${PG_DB_NAME:-streamy_api}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER:-streamy}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - streamy-net
+    # Décommente si tu veux exposer PG sur l'hôte :
+    # ports:
+    #   - "5432:5432"
+
+volumes:
+  streamy-data:
+  postgres-data:
+
+networks:
+  streamy-net:
+    driver: bridge
