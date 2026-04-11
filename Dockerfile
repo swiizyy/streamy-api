@@ -31,7 +31,7 @@ COPY --from=builder /app/build .
 
 # Créer un user non-root
 RUN addgroup -S streamy && adduser -S streamy -G streamy
-RUN mkdir -p /app/data && chown -R streamy:streamy /app/data
+RUN mkdir -p /app/data /app/tmp && chown -R streamy:streamy /app/data /app/tmp
 USER streamy
 
 # Port
