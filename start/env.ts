@@ -35,6 +35,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   TMDB_BASE_URL: Env.schema.string.optional({ format: 'url', tld: false }),
 
   // Database
+  DB_CONNECTION: Env.schema.enum(['sqlite', 'mysql', 'postgres'] as const),
   SQLITE_FILENAME: Env.schema.string.optional(),
 
   // Download sync
