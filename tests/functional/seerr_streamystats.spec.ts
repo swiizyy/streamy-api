@@ -20,7 +20,7 @@ import type { TmdbSearchResult } from '#services/tmdb_types'
 /** Minimal JellyfinAuthResponse fixture */
 function makeJellyfinAuthResponse(
   overrides: {
-    id?: string
+    jellyfinUserId?: string
     name?: string
     isAdmin?: boolean
     token?: string
@@ -28,7 +28,7 @@ function makeJellyfinAuthResponse(
 ): JellyfinAuthResponse {
   return {
     User: {
-      Id: overrides.id ?? 'jf-seerr-001',
+      Id: overrides.jellyfinUserId ?? 'jf-seerr-001',
       Name: overrides.name ?? 'seerr-user',
       HasPassword: true,
       HasConfiguredPassword: true,
