@@ -40,9 +40,6 @@ services:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
     volumes:
       - streamy-data:/app/data  # SQLite DB + éventuels fichiers
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - streamy-net
 
