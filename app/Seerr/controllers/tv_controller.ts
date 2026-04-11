@@ -55,7 +55,7 @@ export default class SeerrTvController {
         originCountry: '',
       })),
       numberOfEpisodes: show.number_of_episodes,
-      numberOfSeason: show.number_of_seasons,
+      numberOfSeasons: show.number_of_seasons,
       originCountry: (show as any).origin_country ?? [],
       originalLanguage: show.original_language,
       originalName: show.original_name,
