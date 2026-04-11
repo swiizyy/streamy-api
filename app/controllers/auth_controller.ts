@@ -4,7 +4,7 @@ import vine from '@vinejs/vine'
 import User from '#models/user'
 import JellyfinClient from '#services/jellyfin_client'
 
-const loginValidator = vine.compile(
+const loginValidator = vine.create(
   vine.object({
     username: vine.string().trim().minLength(1),
     password: vine.string().minLength(1),

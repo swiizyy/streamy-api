@@ -22,6 +22,10 @@ function buildAuthHeader(token?: string): string {
   return parts.join(', ')
 }
 
+export function buildJellyfinAuthHeader(token?: string): string {
+  return buildAuthHeader(token)
+}
+
 export default class JellyfinClient {
   protected baseUrl: string
   protected apiKey: string
@@ -29,6 +33,13 @@ export default class JellyfinClient {
   constructor() {
     this.baseUrl = env.get('JELLYFIN_URL').replace(/\/$/, '')
     this.apiKey = env.get('JELLYFIN_API_KEY')
+  }
+
+  /**
+   * Get the base URL of the Jellyfin server
+   */
+  getBaseUrl(): string {
+    return this.baseUrl
   }
 
   /**
