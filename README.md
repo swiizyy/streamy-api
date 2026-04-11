@@ -10,7 +10,7 @@ API unifiée pour Streamyfin remplaçant Overseerr, StreamyStats, JFA-GO et Wiza
 - 📥 **Downloads** — Synchronisation Radarr / Sonarr
 - 🔔 **Webhooks** — Intégration Jellyfin webhooks
 - 💌 **Invitations** — Système de parrainage avec quotas
-- 🔗 **Référrals** — Gestion des comptes invités et expiration
+- 🔗 **Parrainage** — Gestion des comptes invités et expiration
 
 ## Quick Start
 
