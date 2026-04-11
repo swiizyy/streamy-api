@@ -52,7 +52,7 @@ export default class SeerrTvController {
         id: n.id,
         name: n.name,
         logoPath: n.logo_path ?? null,
-        originCountry: '',
+        originCountry: n.origin_country ?? '',
       })),
       numberOfEpisodes: show.number_of_episodes,
       numberOfSeasons: show.number_of_seasons,
