@@ -51,7 +51,8 @@ L'API sera accessible sur `http://localhost:3333`.
 
 ## API Documentation
 
-La documentation Swagger est disponible sur `/docs` une fois le serveur démarré.
+Aucune documentation Swagger / OpenAPI n'est actuellement exposée par défaut sur `/docs`.
+Réfère-toi aux routes implémentées dans le projet et à la configuration ci-dessus pour utiliser l'API.
 
 ## Configuration Jellyfin
 
