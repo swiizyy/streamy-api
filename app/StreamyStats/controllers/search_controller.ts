@@ -1,8 +1,6 @@
-import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import vine from '@vinejs/vine'
 import WatchHistory from '#models/watch_history'
-import StatsAggregator from '#services/stats_aggregator'
 
 const searchValidator = vine.compile(
   vine.object({
@@ -39,10 +37,7 @@ function clampLimit(value: number, max: number): number {
  * Lives in `app/StreamyStats/controllers/` following the feature-based
  * architecture (Romain Lanz model) where each domain owns its own HTTP layer.
  */
-@inject()
 export default class StreamyStatsSearchController {
-  constructor(private stats: StatsAggregator) {}
-
   /**
    * GET /api/streamystats/search
    *
@@ -104,11 +99,30 @@ export default class StreamyStatsSearchController {
       return response.badRequest({ message: 'Invalid type' })
     }
 
-    const targetUserId = user.role === 'admin' ? undefined : user.id
-    const stats = await this.stats.getUserStats(targetUserId ?? user.id)
+    const query = WatchHistory.query()
+      .select('title', 'jellyfin_item_id', 'media_type')
+      .count('* as play_count')
+      .groupBy('jellyfin_item_id', 'title', 'media_type')
+      .orderBy('play_count', 'desc')
+      .limit(limit)
 
-    const topItems = (stats.top_genres ?? []).slice(0, limit)
+    if (mediaType) {
+      query.where('media_type', mediaType)
+    }
 
-    return { results: topItems }
+    if (user.role !== 'admin') {
+      query.where('user_id', user.id)
+    }
+
+    const rows = await query
+
+    return {
+      results: rows.map((row) => ({
+        title: row.title,
+        jellyfinItemId: row.jellyfinItemId,
+        mediaType: row.mediaType,
+        playCount: Number((row as any).$extras.play_count),
+      })),
+    }
   }
 }

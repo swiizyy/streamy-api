@@ -46,8 +46,18 @@ export default class SeerrAuthController {
 
     const user = await User.firstOrNew({ jellyfinId: jfUser.Id })
 
-    // Always sync the role from Jellyfin so that admin demotions take effect.
-    user.role = jfUser.Policy.IsAdministrator ? 'admin' : 'user'
+    // Sync admin status from Jellyfin on every login so that privilege changes
+    // take effect immediately.  For non-admin users we only change the role when
+    // the user is new (default to 'user') or when they are being demoted from
+    // 'admin'.  This preserves the 'requester' role assigned by administrators.
+    if (jfUser.Policy.IsAdministrator) {
+      user.role = 'admin'
+    } else if (user.$isNew) {
+      user.role = 'user'
+    } else if (user.role === 'admin') {
+      // User was an admin but is no longer one in Jellyfin — revert to 'user'.
+      user.role = 'user'
+    }
     user.username = jfUser.Name
     user.jellyfinToken = jellyfinToken
 
