@@ -71,11 +71,13 @@ Réfère-toi aux routes implémentées dans le projet et à la configuration ci-
 
 ## Configuration Radarr / Sonarr
 
-Les instances Radarr et Sonarr se configurent via l'API admin de StreamyAPI :
+Les instances Radarr et Sonarr se configurent via l'API admin de StreamyAPI.
+Cette route nécessite une authentification administrateur (par exemple un token admin/JWT dans l'en-tête `Authorization`) :
 
 ```bash
 # Ajouter une instance Radarr
-POST /api/services
+POST /admin/services
+Authorization: Bearer <admin-token>
 {
   "type": "radarr",
   "name": "Radarr",
