@@ -120,11 +120,11 @@ router
 // ── StreamyStats-compatible API (/api) ────────────────────────────────────────
 router
   .group(() => {
-    router.get('/api/streamystats/search', [StreamyStatsSearchController, 'search'])
-    router.get('/api/streamystats/search/top', [StreamyStatsSearchController, 'top'])
-    // Canonical StreamyStats paths
-    router.get('/api/search', [StreamyStatsSearchController, 'search'])
-    router.get('/api/recommendations', [StreamyStatsRecommendationsController, 'index'])
+    router.get('/api/streamystats/search', [StreamyStatsSearchController, 'search']).as('streamystats.search')
+    router.get('/api/streamystats/search/top', [StreamyStatsSearchController, 'top']).as('streamystats.search.top')
+    // Canonical StreamyStats paths (aliased to avoid route-name collision)
+    router.get('/api/search', [StreamyStatsSearchController, 'search']).as('api.search')
+    router.get('/api/recommendations', [StreamyStatsRecommendationsController, 'index']).as('api.recommendations')
   })
   .use(middleware.multiAuth())
 

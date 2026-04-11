@@ -19,6 +19,7 @@ export interface TmdbSearchItem {
   overview: string
   poster_path: string | null
   backdrop_path: string | null
+  profile_path?: string | null // Person
   release_date?: string // Movie
   first_air_date?: string // TV
   vote_average: number

@@ -47,8 +47,13 @@ export default class MultiAuthMiddleware {
       const user = await User.query().where('jellyfinToken', mediaBrowserToken).first()
 
       if (user) {
-        // Inject the resolved user into the access-tokens guard so that
-        // downstream controllers can call `auth.getUserOrFail()` as usual.
+        // The AccessTokensGuard exposes `user`, `isAuthenticated`, and
+        // `authenticationAttempted` as public instance properties (see guard.d.ts).
+        // We set them directly because there is no public "setUser" API in
+        // AdonisJS v7 access-tokens guard.  This is intentional and allows
+        // downstream controllers to call `auth.getUserOrFail()` as usual.
+        // Note: if the guard's internal shape changes in a future AdonisJS
+        // release, this block will need to be revisited.
         const guard = ctx.auth.use('api') as {
           user: User | undefined
           isAuthenticated: boolean

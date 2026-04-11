@@ -55,20 +55,7 @@ export default class StreamyStatsRecommendationsController {
 
     const topWatched = await topWatchedQuery
 
-    // 2. Collect TMDB IDs the user has already seen
-    const allWatchedQuery = WatchHistory.query()
-      .select('jellyfin_item_id')
-      .distinct('jellyfin_item_id')
-      .where('user_id', user.id)
-
-    if (mediaTypeFilter) {
-      allWatchedQuery.where('media_type', mediaTypeFilter)
-    }
-
-    const watchedRows = await allWatchedQuery
-    const watchedJellyfinIds = new Set(watchedRows.map((r) => r.jellyfinItemId))
-
-    // 3. Fetch TMDB recommendations for the top-watched items.
+    // 2. Fetch TMDB recommendations for the top-watched items.
     //    We use a simple heuristic: if a watch-history title matches a TMDB
     //    multi-search result, we pull its TMDB recommendations.
     const recommendations: any[] = []
@@ -85,9 +72,7 @@ export default class StreamyStatsRecommendationsController {
         }
 
         const mediaTypeForSearch = item.mediaType === 'movie' ? 'movie' : 'tv'
-        const match = searchResult.results.find(
-          (r: any) => r.media_type === mediaTypeForSearch
-        )
+        const match = searchResult.results.find((r: any) => r.media_type === mediaTypeForSearch)
 
         if (!match) continue
 

@@ -12,11 +12,15 @@ const searchValidator = vine.compile(
 )
 
 /**
- * Escape SQL LIKE wildcard characters so that a user-supplied search term
- * matches literal text and cannot accidentally widen the result set.
+ * Escape SQL LIKE special characters for use with an explicit ESCAPE '\' clause.
+ *
+ * SQLite does not treat backslash as a LIKE escape character by default, so we
+ * pair this function with a `whereRaw("... LIKE ? ESCAPE '\\'", [...])` call to
+ * ensure `%` and `_` in user input are treated as literal characters.
+ * Backslashes are escaped first so the added `\` prefixes are not re-escaped.
  */
 function escapeLike(term: string): string {
-  return term.replace(/[\\%_]/g, (char) => `\\${char}`)
+  return term.replace(/\\/g, '\\\\').replace(/%/g, '\\%').replace(/_/g, '\\_')
 }
 
 /**
@@ -51,7 +55,7 @@ export default class StreamyStatsSearchController {
     const limit = clampLimit(rawLimit, 100)
 
     const query = WatchHistory.query()
-      .whereILike('title', `%${escapeLike(q)}%`)
+      .whereRaw("LOWER(title) LIKE LOWER(?) ESCAPE '\\'", [`%${escapeLike(q)}%`])
       .orderBy('watched_at', 'desc')
 
     if (type) {

@@ -2,6 +2,7 @@ import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import vine from '@vinejs/vine'
 import MediaRequest from '#models/media_request'
+import type User from '#models/user'
 import TmdbClient from '#services/tmdb_client'
 import NotificationService from '#services/notification_service'
 import DownloadTracker from '#services/download_tracker'
@@ -37,7 +38,7 @@ function toSeerrStatus(status: MediaRequest['status']): number {
 /**
  * Serialize a MediaRequest into the Seerr-compatible JSON format.
  */
-function serializeRequest(req: MediaRequest & { user?: any }): Record<string, unknown> {
+function serializeRequest(req: MediaRequest & { user?: User }): Record<string, unknown> {
   return {
     id: req.id,
     status: toSeerrStatus(req.status),
@@ -69,7 +70,17 @@ const requestListValidator = vine.compile(
     take: vine.number().positive().optional(),
     skip: vine.number().min(0).optional(),
     filter: vine
-      .enum(['all', 'approved', 'available', 'pending', 'processing', 'unavailable', 'failed', 'deleted', 'completed'] as const)
+      .enum([
+        'all',
+        'approved',
+        'available',
+        'pending',
+        'processing',
+        'declined',
+        'failed',
+        'deleted',
+        'completed',
+      ] as const)
       .optional(),
     sort: vine.enum(['added', 'modified'] as const).optional(),
     sortDirection: vine.enum(['asc', 'desc'] as const).optional(),
@@ -98,8 +109,16 @@ export default class SeerrRequestsController {
    */
   async index({ auth, request }: HttpContext) {
     const user = auth.getUserOrFail()
-    const { take = 20, skip = 0, filter, sort = 'added', sortDirection = 'desc', requestedBy, mediaType } =
-      await request.validateUsing(requestListValidator)
+    const {
+      take: rawTake = 20,
+      skip = 0,
+      filter,
+      sort = 'added',
+      sortDirection = 'desc',
+      requestedBy,
+      mediaType,
+    } = await request.validateUsing(requestListValidator)
+    const take = Math.min(rawTake, 100)
 
     const applyFilters = (q: ReturnType<typeof MediaRequest.query>) => {
       if (user.role !== 'admin') {
@@ -136,7 +155,9 @@ export default class SeerrRequestsController {
     const totalCount = Number(countRow?.$extras.c ?? 0)
 
     const results = await applyFilters(
-      MediaRequest.query().preload('user').orderBy(sort === 'added' ? 'created_at' : 'updated_at', sortDirection)
+      MediaRequest.query()
+        .preload('user')
+        .orderBy(sort === 'added' ? 'created_at' : 'updated_at', sortDirection)
     )
       .offset(skip)
       .limit(take)
@@ -211,7 +232,8 @@ export default class SeerrRequestsController {
   async count({ auth }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const baseQuery = user.role !== 'admin' ? MediaRequest.query().where('user_id', user.id) : MediaRequest.query()
+    const baseQuery =
+      user.role !== 'admin' ? MediaRequest.query().where('user_id', user.id) : MediaRequest.query()
 
     const [total, pending, approved, declined, downloading, available] = await Promise.all([
       baseQuery.clone().count('* as c').first(),
@@ -244,7 +266,10 @@ export default class SeerrRequestsController {
   async show({ auth, params, response }: HttpContext) {
     const user = auth.getUserOrFail()
 
-    const mediaRequest = await MediaRequest.query().where('id', params.requestId).preload('user').firstOrFail()
+    const mediaRequest = await MediaRequest.query()
+      .where('id', params.requestId)
+      .preload('user')
+      .firstOrFail()
 
     if (user.role !== 'admin' && mediaRequest.userId !== user.id) {
       return response.forbidden({ message: 'Insufficient permissions' })
@@ -268,7 +293,10 @@ export default class SeerrRequestsController {
       return response.badRequest({ message: 'Invalid status. Must be approve or decline.' })
     }
 
-    const mediaRequest = await MediaRequest.query().where('id', params.requestId).preload('user').firstOrFail()
+    const mediaRequest = await MediaRequest.query()
+      .where('id', params.requestId)
+      .preload('user')
+      .firstOrFail()
 
     if (mediaRequest.status !== 'pending') {
       return response.status(422).json({ message: 'Only pending requests can be processed' })
@@ -316,7 +344,10 @@ export default class SeerrRequestsController {
 
     queueMicrotask(() => {
       void this.tracker.dispatch(mediaRequest).catch((error) => {
-        logger.error({ error, requestId: mediaRequest.id }, 'Failed to dispatch approved media request')
+        logger.error(
+          { error, requestId: mediaRequest.id },
+          'Failed to dispatch approved media request'
+        )
       })
     })
 

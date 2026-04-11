@@ -62,7 +62,7 @@ function transformItem(item: TmdbSearchItem): Record<string, unknown> {
     mediaType: 'person',
     name: item.name ?? '',
     popularity: item.popularity,
-    profilePath: item.poster_path,
+    profilePath: item.profile_path ?? null,
     adult: item.adult,
     knownFor: (item.known_for ?? []).map((kf) => transformItem(kf)),
   }

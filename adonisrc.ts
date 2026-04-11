@@ -20,10 +20,10 @@ export default defineConfig({
   | Directories
   |--------------------------------------------------------------------------
   |
-  | Configure the scaffolding directories used by `node ace make:*` commands.
-  | The feature-based overrides ensure that, for example,
-  | `node ace make:controller Seerr/Auth` places the file under
-  | `app/Seerr/controllers/` rather than `app/controllers/Seerr/`.
+  | Configure the default scaffolding directories used by `node ace make:*`
+  | commands.  Feature-domain files (e.g. app/Seerr/controllers/) are created
+  | manually or by passing an explicit output path to the make command;
+  | these defaults are used as the fallback for top-level MVC artefacts.
   |
   */
   directories: {
