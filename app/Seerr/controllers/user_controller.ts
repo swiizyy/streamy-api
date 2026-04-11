@@ -48,7 +48,7 @@ export default class SeerrUserController {
       query.whereILike('username', `%${q}%`)
     }
 
-    const total = await User.query().count('* as c').first()
+    const total = await query.clone().count('* as c').first()
     const users = await query.offset(skip).limit(take)
 
     const page = Math.floor(skip / take) + 1
