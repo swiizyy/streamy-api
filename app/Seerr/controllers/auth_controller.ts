@@ -46,10 +46,8 @@ export default class SeerrAuthController {
 
     const user = await User.firstOrNew({ jellyfinId: jfUser.Id })
 
-    if (user.$isNew) {
-      user.role = jfUser.Policy.IsAdministrator ? 'admin' : 'user'
-    }
-
+    // Always sync the role from Jellyfin so that admin demotions take effect.
+    user.role = jfUser.Policy.IsAdministrator ? 'admin' : 'user'
     user.username = jfUser.Name
     user.jellyfinToken = jellyfinToken
 

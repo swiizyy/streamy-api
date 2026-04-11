@@ -4,6 +4,12 @@ import { BaseTransformer } from '@adonisjs/core/transformers'
 import { getPermissions } from '../helpers/permissions.js'
 
 /**
+ * MediaRequest with an optionally preloaded `user` relationship.
+ * The relationship is declared as optional because it may not always be loaded.
+ */
+type MediaRequestWithUser = MediaRequest & { user?: User }
+
+/**
  * Numeric request status values used by the Seerr API contract.
  *
  * Overseerr / Jellyseerr clients expect integer status codes rather than
@@ -53,7 +59,7 @@ function toSeerrMediaType(mediaType: MediaRequest['mediaType']): number {
  * Place transformers in `app/Seerr/transformers/` to co-locate data contracts
  * with the domain that owns them (Romain Lanz / feature-based architecture).
  */
-export default class SeerrTransformer extends BaseTransformer<MediaRequest> {
+export default class SeerrTransformer extends BaseTransformer<MediaRequestWithUser> {
   toObject() {
     const request = this.resource
 
@@ -63,8 +69,8 @@ export default class SeerrTransformer extends BaseTransformer<MediaRequest> {
       type: request.mediaType,
       createdAt: request.createdAt,
       updatedAt: request.updatedAt,
-      requestedBy: this.when(!!(request as any).user, () =>
-        SeerrUserTransformer.transform((request as any).user as User)
+      requestedBy: this.when(request.user !== undefined, () =>
+        SeerrUserTransformer.transform(request.user!)
       ),
       media: {
         mediaType: toSeerrMediaType(request.mediaType),

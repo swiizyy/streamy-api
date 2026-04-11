@@ -14,6 +14,21 @@ const searchValidator = vine.compile(
 )
 
 /**
+ * Escape SQL LIKE wildcard characters so that a user-supplied search term
+ * matches literal text and cannot accidentally widen the result set.
+ */
+function escapeLike(term: string): string {
+  return term.replace(/[\\%_]/g, (char) => `\\${char}`)
+}
+
+/**
+ * Clamp a numeric limit to the range [1, max].
+ */
+function clampLimit(value: number, max: number): number {
+  return Math.max(1, Math.min(value, max))
+}
+
+/**
  * StreamyStats search controller.
  *
  * Provides a search interface over the local watch-history data collected by
@@ -38,9 +53,11 @@ export default class StreamyStatsSearchController {
   async search({ auth, request }: HttpContext) {
     const user = auth.getUserOrFail()
     const { q, type, page = 1, limit: rawLimit = 20 } = await request.validateUsing(searchValidator)
-    const limit = Math.min(rawLimit, 100)
+    const limit = clampLimit(rawLimit, 100)
 
-    const query = WatchHistory.query().whereILike('title', `%${q}%`).orderBy('watched_at', 'desc')
+    const query = WatchHistory.query()
+      .whereILike('title', `%${escapeLike(q)}%`)
+      .orderBy('watched_at', 'desc')
 
     if (type) {
       query.where('media_type', type)
@@ -81,7 +98,7 @@ export default class StreamyStatsSearchController {
     const user = auth.getUserOrFail()
     const mediaType = request.input('type') as 'movie' | 'episode' | undefined
     const limitRaw = Number(request.input('limit') || 10)
-    const limit = Math.min(Number.isFinite(limitRaw) ? limitRaw : 10, 50)
+    const limit = clampLimit(Number.isFinite(limitRaw) ? limitRaw : 10, 50)
 
     if (mediaType && !['movie', 'episode'].includes(mediaType)) {
       return response.badRequest({ message: 'Invalid type' })
