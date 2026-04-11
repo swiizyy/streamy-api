@@ -9,9 +9,13 @@ if [ -z "$APP_KEY" ]; then
   exit 1
 fi
 
-# Run migrations
-echo "📦 Running migrations..."
-node ace migration:run --force
+# Run migrations only when explicitly enabled
+if [ "$RUN_MIGRATIONS" = "true" ]; then
+  echo "📦 Running migrations..."
+  node ace migration:run --force
+else
+  echo "⏭️ Skipping migrations (set RUN_MIGRATIONS=true to enable)"
+fi
 
 # Start the server
 echo "✅ Starting server..."
