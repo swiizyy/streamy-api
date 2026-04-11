@@ -21,6 +21,7 @@ jobs:
       - run: node ace migration:run
         env:
           DB_CONNECTION: sqlite
+          SQLITE_FILENAME=/app/data/streamy.db
           NODE_ENV: test
       - run: node ace test
 
