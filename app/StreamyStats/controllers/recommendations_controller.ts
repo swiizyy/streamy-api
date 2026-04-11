@@ -25,9 +25,9 @@ function clampLimit(value: number, max: number): number {
  * GET /api/recommendations
  *
  * Returns personalised recommendations derived from the authenticated
- * user's watch history.  For each frequently-watched item we request
- * TMDB's built-in recommendations list, then deduplicate, filter out
- * already-watched items, and return the merged result.
+ * user's watch history. For each frequently-watched item we request
+ * TMDB's built-in recommendations list, merge the results, deduplicate
+ * them, and return the combined set.
  */
 @inject()
 export default class StreamyStatsRecommendationsController {
