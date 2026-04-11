@@ -119,6 +119,9 @@ export default class SeerrRequestsController {
           pending: 'pending',
           processing: 'downloading',
           completed: 'available',
+          declined: 'declined',
+          failed: 'failed',
+          deleted: 'deleted',
         }
         const mapped = statusMap[filter]
         if (mapped) {
