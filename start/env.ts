@@ -28,6 +28,7 @@ export default await Env.create(new URL('../', import.meta.url), {
   // Jellyfin
   JELLYFIN_URL: Env.schema.string({ format: 'url', tld: false }),
   JELLYFIN_API_KEY: Env.schema.string(),
+  JELLYFIN_WEBHOOK_SECRET: Env.schema.string.optional(),
 
   // TMDB
   TMDB_API_KEY: Env.schema.string(),

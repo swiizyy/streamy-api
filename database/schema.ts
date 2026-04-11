@@ -135,3 +135,67 @@ export class UserSchema extends BaseModel {
   @column()
   declare username: string
 }
+
+export class WatchHistorySchema extends BaseModel {
+  static $columns = ['createdAt', 'durationTicks', 'episodeNumber', 'id', 'jellyfinItemId', 'mediaType', 'percentPlayed', 'playedTicks', 'seasonNumber', 'seriesName', 'title', 'updatedAt', 'userId', 'watchedAt'] as const
+  $columns = WatchHistorySchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare durationTicks: bigint | number
+  @column()
+  declare episodeNumber: number | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare jellyfinItemId: string
+  @column()
+  declare mediaType: string
+  @column()
+  declare percentPlayed: number
+  @column()
+  declare playedTicks: bigint | number
+  @column()
+  declare seasonNumber: number | null
+  @column()
+  declare seriesName: string | null
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: bigint | number
+  @column.dateTime()
+  declare watchedAt: DateTime
+}
+
+export class WatchSessionSchema extends BaseModel {
+  static $columns = ['clientName', 'createdAt', 'deviceName', 'endedAt', 'id', 'jellyfinItemId', 'jellyfinSessionId', 'pausedDurationTicks', 'playMethod', 'startedAt', 'title', 'updatedAt', 'userId'] as const
+  $columns = WatchSessionSchema.$columns
+  @column()
+  declare clientName: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare deviceName: string
+  @column.dateTime()
+  declare endedAt: DateTime | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare jellyfinItemId: string
+  @column()
+  declare jellyfinSessionId: string | null
+  @column()
+  declare pausedDurationTicks: bigint | number
+  @column()
+  declare playMethod: string
+  @column.dateTime()
+  declare startedAt: DateTime
+  @column()
+  declare title: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: bigint | number
+}

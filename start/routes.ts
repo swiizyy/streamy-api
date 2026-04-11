@@ -12,10 +12,13 @@ const SearchController = () => import('#controllers/search_controller')
 const RequestsController = () => import('#controllers/requests_controller')
 const DownloadsController = () => import('#controllers/downloads_controller')
 const ServicesController = () => import('#controllers/services_controller')
+const WebhooksController = () => import('#controllers/webhooks_controller')
+const StatsController = () => import('#controllers/stats_controller')
 
 router.get('/', () => ({ hello: 'StreamyAPI' }))
 
 router.post('/auth/login', [AuthController, 'login'])
+router.post('/webhooks/jellyfin', [WebhooksController, 'jellyfin'])
 
 router
   .group(() => {
@@ -35,6 +38,11 @@ router
     router.put('/requests/:id', [RequestsController, 'update'])
     router.delete('/requests/:id', [RequestsController, 'destroy'])
     router.get('/requests/:id/download', [DownloadsController, 'show'])
+
+    router.get('/stats/me', [StatsController, 'me'])
+    router.get('/stats/history', [StatsController, 'history'])
+    router.get('/stats/activity', [StatsController, 'activity'])
+    router.get('/stats/user/:id', [StatsController, 'user'])
   })
   .use(middleware.auth())
 
@@ -48,6 +56,7 @@ router
     router.get('/admin/services/:id/test', [ServicesController, 'test'])
     router.get('/admin/services/:id/profiles', [ServicesController, 'profiles'])
     router.get('/admin/services/:id/root-folders', [ServicesController, 'rootFolders'])
+    router.get('/stats/global', [StatsController, 'global'])
   })
   .use(middleware.auth())
   .use(middleware.role({ roles: ['admin'] }))
