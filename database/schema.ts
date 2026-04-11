@@ -32,6 +32,87 @@ export class AuthAccessTokenSchema extends BaseModel {
   declare updatedAt: DateTime | null
 }
 
+export class MediaRequestSchema extends BaseModel {
+  static $columns = ['createdAt', 'externalId', 'id', 'mediaType', 'notes', 'requestedAt', 'respondedAt', 'respondedBy', 'seasons', 'serviceInstanceId', 'status', 'title', 'tmdbId', 'updatedAt', 'userId'] as const
+  $columns = MediaRequestSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column()
+  declare externalId: number | null
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare mediaType: string
+  @column()
+  declare notes: string | null
+  @column.dateTime()
+  declare requestedAt: DateTime
+  @column.dateTime()
+  declare respondedAt: DateTime | null
+  @column()
+  declare respondedBy: bigint | number | null
+  @column()
+  declare seasons: any | null
+  @column()
+  declare serviceInstanceId: bigint | number | null
+  @column()
+  declare status: string
+  @column()
+  declare title: string
+  @column()
+  declare tmdbId: number
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare userId: bigint | number
+}
+
+export class NotificationSchema extends BaseModel {
+  static $columns = ['createdAt', 'id', 'message', 'read', 'title', 'type', 'userId'] as const
+  $columns = NotificationSchema.$columns
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare message: string
+  @column()
+  declare read: boolean
+  @column()
+  declare title: string
+  @column()
+  declare type: string
+  @column()
+  declare userId: bigint | number
+}
+
+export class ServiceInstanceSchema extends BaseModel {
+  static $columns = ['apiKey', 'createdAt', 'id', 'isActive', 'isDefault', 'name', 'qualityProfileId', 'rootFolder', 'type', 'updatedAt', 'url'] as const
+  $columns = ServiceInstanceSchema.$columns
+  @column()
+  declare apiKey: string
+  @column.dateTime({ autoCreate: true })
+  declare createdAt: DateTime
+  @column({ isPrimary: true })
+  declare id: number
+  @column()
+  declare isActive: boolean
+  @column()
+  declare isDefault: boolean
+  @column()
+  declare name: string
+  @column()
+  declare qualityProfileId: number
+  @column()
+  declare rootFolder: string
+  @column()
+  declare type: string
+  @column.dateTime({ autoCreate: true, autoUpdate: true })
+  declare updatedAt: DateTime | null
+  @column()
+  declare url: string
+}
+
 export class UserSchema extends BaseModel {
   static $columns = ['avatarUrl', 'createdAt', 'email', 'id', 'jellyfinId', 'jellyfinToken', 'role', 'updatedAt', 'username'] as const
   $columns = UserSchema.$columns

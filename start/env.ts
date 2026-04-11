@@ -32,5 +32,11 @@ export default await Env.create(new URL('../', import.meta.url), {
   // TMDB
   TMDB_API_KEY: Env.schema.string(),
   TMDB_BASE_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+
+  // Download sync
+  DOWNLOAD_SYNC_INTERVAL_SECONDS: Env.schema.number.optional(),
+
+  // Notifications
+  DISCORD_WEBHOOK_URL: Env.schema.string.optional({ format: 'url', tld: false }),
 })
 

@@ -9,6 +9,9 @@ import { middleware } from '#start/kernel'
 
 const AuthController = () => import('#controllers/auth_controller')
 const SearchController = () => import('#controllers/search_controller')
+const RequestsController = () => import('#controllers/requests_controller')
+const DownloadsController = () => import('#controllers/downloads_controller')
+const ServicesController = () => import('#controllers/services_controller')
 
 router.get('/', () => ({ hello: 'StreamyAPI' }))
 
@@ -25,6 +28,27 @@ router
     router.get('/trending', [SearchController, 'trending'])
     router.get('/discover', [SearchController, 'discover'])
     router.get('/genres', [SearchController, 'genres'])
+
+    router.post('/requests', [RequestsController, 'store'])
+    router.get('/requests', [RequestsController, 'index'])
+    router.get('/requests/:id', [RequestsController, 'show'])
+    router.put('/requests/:id', [RequestsController, 'update'])
+    router.delete('/requests/:id', [RequestsController, 'destroy'])
+    router.get('/requests/:id/download', [DownloadsController, 'show'])
   })
   .use(middleware.auth())
+
+router
+  .group(() => {
+    router.get('/downloads', [DownloadsController, 'index'])
+    router.post('/admin/services', [ServicesController, 'store'])
+    router.get('/admin/services', [ServicesController, 'index'])
+    router.put('/admin/services/:id', [ServicesController, 'update'])
+    router.delete('/admin/services/:id', [ServicesController, 'destroy'])
+    router.get('/admin/services/:id/test', [ServicesController, 'test'])
+    router.get('/admin/services/:id/profiles', [ServicesController, 'profiles'])
+    router.get('/admin/services/:id/root-folders', [ServicesController, 'rootFolders'])
+  })
+  .use(middleware.auth())
+  .use(middleware.role({ roles: ['admin'] }))
 
