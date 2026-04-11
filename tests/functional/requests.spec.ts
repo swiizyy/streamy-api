@@ -178,7 +178,7 @@ test.group('Phase 3 - Media requests', (group) => {
   })
 
   test('enforces permissions user vs admin', async ({ client }) => {
-    const { user, bearer } = await makeUser('user', 'perm-owner')
+    const { user } = await makeUser('user', 'perm-owner')
     const { bearer: otherBearer } = await makeUser('user', 'perm-other')
 
     const req = await MediaRequest.create({

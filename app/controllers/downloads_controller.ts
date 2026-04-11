@@ -3,6 +3,8 @@ import ServiceInstance from '#models/service_instance'
 import DownloadTracker from '#services/download_tracker'
 import RadarrClient from '#services/radarr_client'
 import SonarrClient from '#services/sonarr_client'
+import type { RadarrQueueItem } from '#services/radarr_types'
+import type { SonarrQueueItem } from '#services/sonarr_types'
 import { inject } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 
@@ -38,13 +40,19 @@ export default class DownloadsController {
     const result: any[] = []
 
     for (const instance of instances) {
-      const queue =
-        instance.type === 'radarr'
-          ? await this.radarrClient.getQueue(instance)
-          : await this.sonarrClient.getQueue(instance)
-
+      let queue: RadarrQueueItem[] | SonarrQueueItem[]
+      if (instance.type === 'radarr') {
+        queue = await this.radarrClient.getQueue(instance)
+      } else {
+        queue = await this.sonarrClient.getQueue(instance)
+      }
       for (const item of queue) {
-        const externalId = instance.type === 'radarr' ? item.movieId : item.seriesId
+        let externalId: number | undefined
+        if (instance.type === 'radarr') {
+          externalId = (item as RadarrQueueItem).movieId
+        } else {
+          externalId = (item as SonarrQueueItem).seriesId
+        }
         const linkedRequest = externalId
           ? await MediaRequest.query()
               .where('service_instance_id', instance.id)

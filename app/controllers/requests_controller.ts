@@ -59,12 +59,14 @@ export default class RequestsController {
       })
     }
 
-    const media =
-      payload.media_type === 'movie'
-        ? await this.tmdb.getMovie(payload.tmdb_id)
-        : await this.tmdb.getTvShow(payload.tmdb_id)
-
-    const title = payload.media_type === 'movie' ? media.title : media.name
+    let title: string
+    if (payload.media_type === 'movie') {
+      const movie = await this.tmdb.getMovie(payload.tmdb_id)
+      title = movie.title
+    } else {
+      const show = await this.tmdb.getTvShow(payload.tmdb_id)
+      title = show.name
+    }
 
     const created = await MediaRequest.create({
       userId: user.id,
