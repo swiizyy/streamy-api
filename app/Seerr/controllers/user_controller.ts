@@ -33,8 +33,9 @@ export default class SeerrUserController {
       return response.forbidden({ message: 'Admin role required' })
     }
 
-    const { take = 25, skip = 0, sort = 'created', sortDirection = 'asc', q } =
+    const { take: takeInput = 25, skip = 0, sort = 'created', sortDirection = 'asc', q } =
       await request.validateUsing(userListValidator)
+    const take = Math.min(takeInput, 100)
 
     const columnMap: Record<string, string> = {
       created: 'created_at',
