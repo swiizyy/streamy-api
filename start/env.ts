@@ -42,7 +42,33 @@ export default await Env.create(new URL('../', import.meta.url), {
   ACCOUNT_EXPIRY_NOTIFICATION_DAYS: Env.schema.number.optional(),
   CACHE_VIEWS: Env.schema.boolean.optional(),
 
-  // Notifications
+  // Notifications — webhooks
   DISCORD_WEBHOOK_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+  SLACK_WEBHOOK_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+  NTFY_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+  NTFY_TOPIC: Env.schema.string.optional(),
+
+  // Notifications — SMTP
+  SMTP_HOST: Env.schema.string.optional(),
+  SMTP_PORT: Env.schema.number.optional(),
+  SMTP_USER: Env.schema.string.optional(),
+  SMTP_PASSWORD: Env.schema.string.optional(),
+  MAIL_FROM: Env.schema.string.optional(),
+
+  // Radarr (default instance via env, overridden by ServiceInstance if configured)
+  RADARR_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+  RADARR_API_KEY: Env.schema.string.optional(),
+
+  // Sonarr
+  SONARR_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+  SONARR_API_KEY: Env.schema.string.optional(),
+
+  // TVDB
+  TVDB_API_KEY: Env.schema.string.optional(),
+  TVDB_BASE_URL: Env.schema.string.optional({ format: 'url', tld: false }),
+
+  // Redis (BullMQ)
+  REDIS_HOST: Env.schema.string.optional(),
+  REDIS_PORT: Env.schema.number.optional(),
 })
 

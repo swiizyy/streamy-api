@@ -1,0 +1,28 @@
+services:
+  streamy-api:
+    build: .
+    ports:
+      - "3333:3333"
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      - redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.streamy.rule=Host(`streamy.example.com`)"
+      - "traefik.http.services.streamy.loadbalancer.server.port=3333"
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+volumes:
+  redis_data:

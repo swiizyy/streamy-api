@@ -26,6 +26,7 @@ server.use([
   () => import('#middleware/force_json_response_middleware'),
   () => import('#middleware/container_bindings_middleware'),
   () => import('@adonisjs/cors/cors_middleware'),
+  () => import('@adonisjs/vite/vite_middleware'),
 ])
 
 /**
@@ -49,4 +50,5 @@ export const middleware = router.named({
   role: () => import('#middleware/role_middleware'),
   inviteQuota: () => import('#middleware/invite_quota_middleware'),
   multiAuth: () => import('#auth/middleware/multi_auth_middleware'),
+  inertia: () => import('#middleware/inertia_middleware'),
 })

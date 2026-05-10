@@ -17,6 +17,13 @@ const StatsController = () => import('#controllers/stats_controller')
 const InvitesController = () => import('#controllers/invites_controller')
 const ReferralsController = () => import('#controllers/referrals_controller')
 
+// ── Inertia (UI) controllers ─────────────────────────────────────────────────
+const InertiaAuthController = () => import('#controllers/inertia_auth_controller')
+const DashboardController = () => import('#controllers/dashboard_controller')
+const InertiaSearchController = () => import('#controllers/inertia_search_controller')
+const InertiaRequestsController = () => import('#controllers/inertia_requests_controller')
+const AdminController = () => import('#controllers/admin_controller')
+
 // ── Feature-based domain controllers ─────────────────────────────────────────
 const SeerrAuthController = () => import('#seerr/controllers/auth_controller')
 const SeerrSearchController = () => import('#seerr/controllers/search_controller')
@@ -127,4 +134,27 @@ router
     router.get('/api/recommendations', [StreamyStatsRecommendationsController, 'index']).as('api.recommendations')
   })
   .use(middleware.multiAuth())
+
+// ── Inertia UI routes ────────────────────────────────────────────────────────
+router.get('/login', [InertiaAuthController, 'loginPage'])
+
+router
+  .group(() => {
+    router.get('/', [DashboardController, 'index'])
+    router.get('/search', [InertiaSearchController, 'index'])
+    router.get('/requests', [InertiaRequestsController, 'index'])
+    router.get('/requests/:id', [InertiaRequestsController, 'show'])
+
+    // Admin UI
+    router
+      .group(() => {
+        router.get('/admin/requests', [AdminController, 'requests'])
+        router.get('/admin/stats', [AdminController, 'adminStats'])
+        router.get('/admin/users', [AdminController, 'users'])
+        router.get('/admin/settings', [AdminController, 'settings'])
+        router.patch('/admin/settings/notifications', [AdminController, 'updateNotificationSettings'])
+      })
+      .use(middleware.role({ roles: ['admin'] }))
+  })
+  .use(middleware.auth())
 

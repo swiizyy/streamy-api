@@ -45,6 +45,7 @@ export default defineConfig({
     () => import('@adonisjs/core/commands'),
     () => import('@adonisjs/lucid/commands'),
     () => import('@adonisjs/session/commands'),
+    () => import('@adonisjs/inertia/commands'),
   ],
 
   /*
@@ -69,6 +70,8 @@ export default defineConfig({
     () => import('@adonisjs/lucid/database_provider'),
     () => import('@adonisjs/cors/cors_provider'),
     () => import('@adonisjs/auth/auth_provider'),
+    () => import('@adonisjs/vite/vite_provider'),
+    () => import('@adonisjs/inertia/inertia_provider'),
     () => import('#providers/api_provider'),
   ],
 
@@ -86,6 +89,7 @@ export default defineConfig({
     () => import('#start/validator'),
     () => import('#start/download_sync'),
     () => import('#start/expired_accounts'),
+    () => import('#start/stats_sync'),
   ],
 
   /*
