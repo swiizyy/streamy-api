@@ -71,7 +71,7 @@
     "@vinejs/vine": "^4.3.0",
     "better-sqlite3": "^12.8.0",
     "luxon": "^3.7.2",
-    "nanoid": "^5.1.7",
+    "nanoid": "^5.1.16",
     "reflect-metadata": "^0.2.2"
   },
   "hotHook": {
